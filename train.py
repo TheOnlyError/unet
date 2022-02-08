@@ -1,7 +1,12 @@
+import logging
+import os
 import time
 
 from src import unet
 import tensorflow as tf
+
+os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
+logging.disable(logging.WARNING)
 
 def _parse_function(example_proto):
     feature = {'image':tf.io.FixedLenFeature([],tf.string),

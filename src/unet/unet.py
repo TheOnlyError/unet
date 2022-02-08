@@ -8,7 +8,7 @@ from tensorflow.keras import losses
 from tensorflow.keras.initializers import TruncatedNormal
 from tensorflow.keras.optimizers import Adam
 
-import unet.metrics
+import src.unet.metrics
 
 
 class ConvBlock(layers.Layer):

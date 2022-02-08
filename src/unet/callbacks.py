@@ -5,7 +5,7 @@ import tensorflow as tf
 from tensorflow.keras import backend as K
 from tensorflow.keras.callbacks import TensorBoard, Callback
 
-from unet import utils
+from src.unet import utils
 
 
 class TensorBoardImageSummary(Callback):

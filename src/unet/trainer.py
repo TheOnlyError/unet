@@ -7,9 +7,9 @@ from tensorflow.keras import Model
 from tensorflow.keras.callbacks import Callback
 from tensorflow.keras.callbacks import ModelCheckpoint, TensorBoard
 
-from unet import utils, schedulers
-from unet.callbacks import TensorBoardWithLearningRate, TensorBoardImageSummary
-from unet.schedulers import SchedulerType
+from src.unet import utils, schedulers
+from src.unet.callbacks import TensorBoardWithLearningRate, TensorBoardImageSummary
+from src.unet.schedulers import SchedulerType
 
 
 class Trainer:
