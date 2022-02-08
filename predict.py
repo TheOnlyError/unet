@@ -2,7 +2,8 @@ import logging
 import os
 import time
 
-from src import unet
+import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
 import tensorflow as tf
 
 from src.unet.datasets import circles
@@ -31,29 +32,19 @@ def loadDataset():
     # return full_dataset, full_dataset
 
 def main():
-    # train_dataset, validation_dataset = loadDataset()
-    train_dataset, validation_dataset = circles.load_data(100, nx=172, ny=172, splits=(0.8, 0.2))
+    train_dataset, validation_dataset = loadDataset()
+    unet_model = tf.keras.models.load_model('unet_model/saved_model')
 
-    channels = 1
-    classes = 2
-    LEARNING_RATE = 1e-3
-    unet_model = unet.build_model(channels=channels,
-                                  num_classes=classes,
-                                  layer_depth=3,
-                                  filters_root=64)
-    unet.finalize_model(unet_model, learning_rate=LEARNING_RATE)
+    rows = 10
+    fig, axs = plt.subplots(rows, 3, figsize=(8, 30))
+    for ax, (image, label) in zip(axs, train_dataset.take(rows).batch(1)):
+        prediction = unet_model.predict(image)
+        ax[0].matshow(image[0])
+        ax[1].matshow(label[0, ..., 0], cmap="gray")
+        ax[2].matshow(prediction[0].argmax(axis=-1), cmap="gray")
 
-    trainer = unet.Trainer(checkpoint_callback=False,
-                           learning_rate_scheduler=unet.SchedulerType.WARMUP_LINEAR_DECAY,
-                           warmup_proportion=0.1,
-                           learning_rate=LEARNING_RATE)
-    trainer.fit(unet_model,
-                train_dataset,
-                validation_dataset,
-                epochs=60,
-                batch_size=1)
-
-    unet_model.save("unet_model")
+    timestr = time.strftime("%Y%m%d-%H%M%S")
+    plt.savefig(timestr)
 
 
 
@@ -61,4 +52,4 @@ if __name__ == "__main__":
     tic = time.time()
     main()
     toc = time.time()
-    print('total training + evaluation time = {} seconds'.format((toc - tic)))
+    print('total process time = {} seconds'.format((toc - tic)))
