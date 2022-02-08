@@ -50,7 +50,7 @@ def main():
     trainer.fit(unet_model,
                 train_dataset,
                 validation_dataset,
-                epochs=160,
+                epochs=60,
                 batch_size=1)
 
     unet_model.save("unet_model")
@@ -61,4 +61,4 @@ if __name__ == "__main__":
     tic = time.time()
     main()
     toc = time.time()
-    print('total training + evaluation time = {} minutes'.format((toc - tic) / 60))
+    print('total training + evaluation time = {} seconds'.format((toc - tic)))

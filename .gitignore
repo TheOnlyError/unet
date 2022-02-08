@@ -1,4 +1,9 @@
 # Temporary and binary files
+
+*.tfrecords
+
+unet_model/*
+
 *~
 *.py[cod]
 *.so
