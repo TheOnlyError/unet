@@ -9,6 +9,7 @@ from tensorflow.keras.initializers import TruncatedNormal
 from tensorflow.keras.optimizers import Adam
 
 import src.unet.metrics
+from src import unet
 
 
 class ConvBlock(layers.Layer):
