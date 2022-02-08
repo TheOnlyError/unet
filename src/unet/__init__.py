@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 from pkg_resources import get_distribution, DistributionNotFound
 
-from unet import metrics
-from unet.schedulers import SchedulerType
-from unet.trainer import Trainer
-from unet.unet import build_model, finalize_model
+from src.unet import metrics
+from src.unet.schedulers import SchedulerType
+from src.unet.trainer import Trainer
+from src.unet.unet import build_model, finalize_model
 
 try:
     # Change here if project is renamed and does not equal the package name
