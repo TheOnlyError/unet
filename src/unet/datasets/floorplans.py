@@ -1,5 +1,7 @@
 from typing import Tuple
 
+import matplotlib.pyplot as plt
+import numpy as np
 import tensorflow as tf
 
 size = 512
@@ -61,14 +63,9 @@ def _parse_function(example_proto):
     feature = {'image': tf.io.FixedLenFeature([], tf.string),
                'mask': tf.io.FixedLenFeature([], tf.string)}
     example = tf.io.parse_single_example(example_proto, feature)
-    image = tf.io.decode_raw(example['image'], tf.uint8)
-    mask = tf.io.decode_raw(example['mask'], tf.uint8)
 
-    image = tf.cast(image, dtype=tf.float32)
-    image = tf.reshape(image, [size, size, 3]) / 255
-    mask = tf.reshape(mask, [size, size, 1])
-
-    return image, mask
+    image, mask = decodeAllRaw(example)
+    return preprocess(image, mask)
 
 
 def decodeAllRaw(x):
@@ -79,12 +76,22 @@ def decodeAllRaw(x):
 
 def preprocess(img, mask, size=512):  # 1024
     img = tf.cast(img, dtype=tf.float32)
-    img = tf.reshape(img, [-1, size, size, 3]) / 255
-    mask = tf.reshape(mask, [-1, size, size])
+    img = tf.reshape(img, [size, size, 3]) / 255
+    mask = tf.reshape(mask, [size, size, 1])
     return img, mask
 
 
-def loadDataset(size=512):
+def loadDataset():
     raw_dataset = tf.data.TFRecordDataset('trainfull_norooms_unet.tfrecords')
     parsed_dataset = raw_dataset.map(_parse_function)
     return parsed_dataset
+
+
+if __name__ == "__main__":
+    train_dataset, validation_dataset = load_data()
+    rows = 10
+    fig, axs = plt.subplots(rows, 2, figsize=(8, 30))
+    for ax, (image, mask) in zip(axs, train_dataset.take(rows).batch(1)):
+        ax[0].matshow(np.array(image[0]).squeeze())
+        ax[2].matshow(np.array(mask[0]).squeeze(), cmap="gray")
+    plt.show()

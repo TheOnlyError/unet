@@ -4,6 +4,7 @@
 
 unet_model/*
 log/*
+unet/*
 
 *~
 *.py[cod]
