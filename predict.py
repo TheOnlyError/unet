@@ -20,11 +20,9 @@ def main():
     fig, axs = plt.subplots(rows, 3, figsize=(8, 30))
     for ax, (image, label) in zip(axs, train_dataset.take(rows).batch(1)):
         prediction = unet_model.predict(image)
-        p = np.array(prediction[0]).squeeze()
-        print(np.min(p), np.max(p))
         ax[0].matshow(np.array(image[0]).squeeze())
         ax[1].matshow(label[0, ..., 0], cmap="gray")
-        ax[2].matshow(np.array(prediction[0]).squeeze(), cmap="gray")
+        ax[2].matshow(prediction[0].argmax(axis=-1), cmap="gray")
 
     timestr = time.strftime("%Y%m%d-%H%M%S")
     plt.show()

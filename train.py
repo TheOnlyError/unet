@@ -21,21 +21,19 @@ def main():
 
     channels = 3
     classes = 3
-    LEARNING_RATE = 1e-3
+    LEARNING_RATE = 1e-4
     unet_model = unet.build_model(channels=channels,
                                   num_classes=classes,
                                   layer_depth=5,
-                                  filters_root=64)
+                                  filters_root=64,
+                                  padding="same")
     unet.finalize_model(unet_model,
                         loss=losses.SparseCategoricalCrossentropy(),
                         metrics=[metrics.SparseCategoricalAccuracy()],
                         auc=False,
                         learning_rate=LEARNING_RATE)
 
-    trainer = unet.Trainer(checkpoint_callback=False,
-                           learning_rate_scheduler=unet.SchedulerType.WARMUP_LINEAR_DECAY,
-                           warmup_proportion=0.1,
-                           learning_rate=LEARNING_RATE)
+    trainer = unet.Trainer(checkpoint_callback=False)
     trainer.fit(unet_model,
                 train_dataset,
                 validation_dataset,
