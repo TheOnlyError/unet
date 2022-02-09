@@ -3,6 +3,7 @@
 *.tfrecords
 
 unet_model/*
+log/*
 
 *~
 *.py[cod]

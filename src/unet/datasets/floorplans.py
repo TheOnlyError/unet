@@ -43,17 +43,18 @@ def load_image_train(x):
 
 def load_data(buffer_size=32, **kwargs) -> Tuple[tf.data.Dataset, tf.data.Dataset]:
     dataset = loadDataset()
-    # DATASET_SIZE = len(list(dataset))
-    # train_size = int(0.7 * DATASET_SIZE)
-    # val_size = int(0.3 * DATASET_SIZE)
-    #
-    # train_dataset = dataset.take(train_size)
-    # test_dataset = dataset.skip(train_size)
+    DATASET_SIZE = len(list(dataset))
+    print(DATASET_SIZE)
+    train_size = int(0.7 * DATASET_SIZE)
+    val_size = int(0.3 * DATASET_SIZE)
+
+    train_dataset = dataset.take(train_size)
+    test_dataset = dataset.skip(train_size)
     #
     # train = train_dataset.map(load_image_train, num_parallel_calls=tf.data.experimental.AUTOTUNE)
     # test = test_dataset.map(load_image_train)
     # train_dataset = train.cache().shuffle(buffer_size).take(train_size)
-    return dataset, dataset
+    return train_dataset, test_dataset
 
 
 def _parse_function(example_proto):
