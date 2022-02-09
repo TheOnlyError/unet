@@ -39,7 +39,7 @@ def main():
     trainer.fit(unet_model,
                 train_dataset,
                 validation_dataset,
-                epochs=10,
+                epochs=60,
                 batch_size=1)
 
     unet_model.save("unet_model")
