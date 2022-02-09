@@ -5,7 +5,7 @@ import time
 from tensorflow import losses, metrics
 
 from src import unet, mrcnn
-from src.unet.datasets import floorplans, circles, oxford_iiit_pet
+from src.unet.datasets import floorplans, floorplans_mrcnn
 
 os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
 logging.disable(logging.WARNING)
@@ -13,7 +13,7 @@ logging.disable(logging.WARNING)
 
 def main():
     # train_dataset, validation_dataset = loadDataset()
-    train_dataset, validation_dataset = floorplans.load_data()
+
     # train_dataset, validation_dataset = circles.load_data(100, nx=200, ny=200, splits=(0.7, 0.3))
     # train_dataset, validation_dataset = oxford_iiit_pet.load_data()
 
@@ -25,6 +25,7 @@ def main():
 
     train_unet = False
     if train_unet:
+        train_dataset, validation_dataset = floorplans.load_data()
         model = unet.build_model(channels=channels,
                                       num_classes=classes,
                                       layer_depth=5,
@@ -32,6 +33,7 @@ def main():
                                       padding="same")
         name = 'unet_model'
     else:
+        train_dataset, validation_dataset = floorplans_mrcnn.load_data()
         class SimpleConfig(mrcnn.config.Config):
             # Give the configuration a recognizable name
             NAME = "coco_inference"
@@ -47,6 +49,7 @@ def main():
         model = mrcnn.model.MaskRCNN(mode="training",
                                      config=SimpleConfig(),
                                      model_dir=os.getcwd())
+        model = model.keras_model
 
     unet.finalize_model(model,
                         loss=losses.SparseCategoricalCrossentropy(),
@@ -58,8 +61,10 @@ def main():
     trainer.fit(model,
                 train_dataset,
                 validation_dataset,
-                epochs=60,
-                batch_size=1)
+                epochs=20,
+                batch_size=1,
+                steps_per_epoch=1023,
+                validation_steps=439)
     model.save(name)
 
 if __name__ == "__main__":

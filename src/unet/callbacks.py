@@ -29,9 +29,9 @@ class TensorBoardImageSummary(Callback):
     def on_epoch_end(self, epoch, logs=None):
         predictions = self.model.predict(self.dataset.batch(batch_size=1))
 
-        self._log_histogramms(epoch, predictions)
-
-        self._log_image_summaries(epoch, predictions)
+        # self._log_histogramms(epoch, predictions)
+        #
+        # self._log_image_summaries(epoch, predictions)
 
         self.file_writer.flush()
 
