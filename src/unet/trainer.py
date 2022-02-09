@@ -28,13 +28,13 @@ class Trainer:
     """
 
     def __init__(self,
-                 name: Optional[str]="unet",
-                 log_dir_path: Optional[Union[Path, str]]=None,
+                 name: Optional[str] = "unet",
+                 log_dir_path: Optional[Union[Path, str]] = None,
                  checkpoint_callback: Optional[Union[TensorBoard, bool]] = True,
                  tensorboard_callback: Optional[Union[TensorBoard, bool]] = True,
                  tensorboard_images_callback: Optional[Union[TensorBoardImageSummary, bool]] = True,
-                 callbacks: Union[List[Callback], None]=None,
-                 learning_rate_scheduler: Optional[Union[SchedulerType, Callback]]=None,
+                 callbacks: Union[List[Callback], None] = None,
+                 learning_rate_scheduler: Optional[Union[SchedulerType, Callback]] = None,
                  **scheduler_opts,
                  ):
         self.checkpoint_callback = checkpoint_callback
@@ -42,7 +42,7 @@ class Trainer:
         self.tensorboard_images_callback = tensorboard_images_callback
         self.callbacks = callbacks
         self.learning_rate_scheduler = learning_rate_scheduler
-        self.scheduler_opts=scheduler_opts
+        self.scheduler_opts = scheduler_opts
 
         if log_dir_path is None:
             log_dir_path = build_log_dir_path(name)
@@ -54,8 +54,8 @@ class Trainer:
     def fit(self,
             model: Model,
             train_dataset: tf.data.Dataset,
-            validation_dataset: Optional[tf.data.Dataset]=None,
-            test_dataset: Optional[tf.data.Dataset]=None,
+            validation_dataset: Optional[tf.data.Dataset] = None,
+            test_dataset: Optional[tf.data.Dataset] = None,
             epochs=10,
             batch_size=1,
             **fit_kwargs):
@@ -93,6 +93,7 @@ class Trainer:
                             validation_data=validation_dataset,
                             epochs=epochs,
                             callbacks=callbacks,
+                            verbose=2,
                             **fit_kwargs)
 
         self.evaluate(model, test_dataset, prediction_shape)
@@ -111,7 +112,7 @@ class Trainer:
                          train_dataset: Optional[tf.data.Dataset],
                          validation_dataset: Optional[tf.data.Dataset]) -> List[Callback]:
         if self.callbacks:
-           callbacks = self.callbacks
+            callbacks = self.callbacks
         else:
             callbacks = []
 
@@ -165,9 +166,9 @@ class Trainer:
             return learning_rate_scheduler
 
     def evaluate(self,
-                 model:Model,
-                 test_dataset: Optional[tf.data.Dataset]=None,
-                 shape:Tuple[int, int, int]=None):
+                 model: Model,
+                 test_dataset: Optional[tf.data.Dataset] = None,
+                 shape: Tuple[int, int, int] = None):
 
         if test_dataset:
             model.evaluate(test_dataset
@@ -176,5 +177,5 @@ class Trainer:
                            )
 
 
-def build_log_dir_path(root: Optional[str]= "unet") -> str:
+def build_log_dir_path(root: Optional[str] = "unet") -> str:
     return str(Path(root) / datetime.now().strftime("%Y-%m-%dT%H-%M_%S"))
