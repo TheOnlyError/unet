@@ -4,7 +4,7 @@ import time
 
 from tensorflow import losses, metrics
 
-from src import unet
+from src import unet, mrcnn
 from src.unet.datasets import floorplans, circles, oxford_iiit_pet
 
 os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
@@ -22,26 +22,45 @@ def main():
     channels = 3
     classes = 3
     LEARNING_RATE = 1e-4
-    unet_model = unet.build_model(channels=channels,
-                                  num_classes=classes,
-                                  layer_depth=5,
-                                  filters_root=64,
-                                  padding="same")
-    unet.finalize_model(unet_model,
+
+    train_unet = False
+    if train_unet:
+        model = unet.build_model(channels=channels,
+                                      num_classes=classes,
+                                      layer_depth=5,
+                                      filters_root=64,
+                                      padding="same")
+        name = 'unet_model'
+    else:
+        class SimpleConfig(mrcnn.config.Config):
+            # Give the configuration a recognizable name
+            NAME = "coco_inference"
+
+            # set the number of GPUs to use along with the number of images per GPU
+            GPU_COUNT = 1
+            IMAGES_PER_GPU = 1
+
+            NUM_CLASSES = classes
+
+        name = 'mrcnn_model'
+
+        model = mrcnn.model.MaskRCNN(mode="training",
+                                     config=SimpleConfig(),
+                                     model_dir=os.getcwd())
+
+    unet.finalize_model(model,
                         loss=losses.SparseCategoricalCrossentropy(),
                         metrics=[metrics.SparseCategoricalAccuracy()],
                         auc=False,
                         learning_rate=LEARNING_RATE)
 
     trainer = unet.Trainer(checkpoint_callback=False)
-    trainer.fit(unet_model,
+    trainer.fit(model,
                 train_dataset,
                 validation_dataset,
                 epochs=60,
                 batch_size=1)
-
-    unet_model.save("unet_model")
-
+    model.save(name)
 
 if __name__ == "__main__":
     tic = time.time()

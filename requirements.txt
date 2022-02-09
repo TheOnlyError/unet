@@ -2,7 +2,8 @@ matplotlib==3.3.2
 numpy==1.18.5
 opencv-python==4.4.0.44
 pdbpp==0.10.2
-tensorboard==2.3.0
+tensorflow==2.2.0
+keras==2.3.1
 tensorflow-gpu==2.3.0
 scipy==1.4.1
 Pillow==8.0.1
