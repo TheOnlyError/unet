@@ -1,5 +1,5 @@
 import tensorflow as tf
-
+import numpy as np
 
 def mean_iou(y_true, y_pred):
     y_true = tf.cast(y_true, tf.dtypes.float64)

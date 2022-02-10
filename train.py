@@ -5,7 +5,7 @@ import time
 from tensorflow import losses, metrics
 
 from src import unet, mrcnn
-from src.unet.datasets import floorplans, floorplans_mrcnn
+from src.unet.datasets import floorplans, floorplans_mrcnn, circles
 
 os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
 logging.disable(logging.WARNING)
@@ -19,8 +19,8 @@ def main():
 
     # print(train_dataset)
 
-    channels = 3
-    classes = 3
+    channels = 1
+    classes = 2
     LEARNING_RATE = 1e-4
 
     train_unet = False
@@ -32,6 +32,20 @@ def main():
                                       filters_root=64,
                                       padding="same")
         name = 'unet_model'
+        unet.finalize_model(model,
+                            loss=losses.SparseCategoricalCrossentropy(),
+                            metrics=[metrics.SparseCategoricalAccuracy()],
+                            auc=False,
+                            learning_rate=LEARNING_RATE)
+
+        trainer = unet.Trainer(checkpoint_callback=False)
+        trainer.fit(model,
+                    train_dataset,
+                    validation_dataset,
+                    epochs=20,
+                    batch_size=1,
+                    steps_per_epoch=1023,
+                    validation_steps=439)
     else:
         train_dataset, validation_dataset = floorplans_mrcnn.load_data()
         class SimpleConfig(mrcnn.config.Config):
@@ -49,22 +63,12 @@ def main():
         model = mrcnn.model.MaskRCNN(mode="training",
                                      config=SimpleConfig(),
                                      model_dir=os.getcwd())
+
+        model.compile(LEARNING_RATE)
+
+        model.train(train_dataset, validation_dataset, LEARNING_RATE, 20, layers='heads')
+
         model = model.keras_model
-
-    unet.finalize_model(model,
-                        loss=losses.SparseCategoricalCrossentropy(),
-                        metrics=[metrics.SparseCategoricalAccuracy()],
-                        auc=False,
-                        learning_rate=LEARNING_RATE)
-
-    trainer = unet.Trainer(checkpoint_callback=False)
-    trainer.fit(model,
-                train_dataset,
-                validation_dataset,
-                epochs=20,
-                batch_size=1,
-                steps_per_epoch=1023,
-                validation_steps=439)
     model.save(name)
 
 if __name__ == "__main__":

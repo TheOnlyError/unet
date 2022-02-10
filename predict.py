@@ -10,6 +10,7 @@ from src.unet import custom_objects
 from src.unet.datasets import circles, floorplans
 from src.unet.unet import *
 
+os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
 logging.disable(logging.WARNING)
 
@@ -19,12 +20,16 @@ def main():
     predict = True
     if predict:
         # image = mpimg.imread('resources/single.jpg')
-        # image = mpimg.imread('resources/multi_large.jpg')
-        image = mpimg.imread('resources/multi_largest.jpg')
+        image = mpimg.imread('resources/multi_large.jpg')
+        # image = mpimg.imread('resources/multi_largest.jpg')
         # image = cv2.resize(image, dsize=(512, 512), interpolation=cv2.INTER_CUBIC)
         image = np.expand_dims(image, axis=0)
+        image = tf.cast(image, dtype=tf.float32)
+        image = image / 255
+
         prediction = unet_model.predict(image)
         result = prediction[0].argmax(axis=-1)
+
 
         timestr = time.strftime("%Y%m%d-%H%M%S")
         mpimg.imsave("result" + timestr + ".jpg", result.astype(np.uint8))

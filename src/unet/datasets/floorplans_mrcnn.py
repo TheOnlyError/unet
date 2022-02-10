@@ -1,98 +1,102 @@
-from typing import Tuple
-
-import matplotlib.pyplot as plt
+import json
+import os
 import numpy as np
-import tensorflow as tf
+import skimage
 
-size = 512
-IMAGE_SIZE = (512, 512)
-channels = 3
-classes = 3
+from src.mrcnn import utils
 
+class FloorPlanDataset(utils.Dataset):
 
-def decode_image(image):
-    image = tf.image.decode_jpeg(image, channels=3)
-    image = tf.cast(image, tf.float32)
-    image = tf.reshape(image, [*IMAGE_SIZE, 3])
-    return image
+    def load_balloon(self, dataset_dir, subset):
+        """Load a subset of the Balloon dataset.
+        dataset_dir: Root directory of the dataset.
+        subset: Subset to load: train or val
+        """
+        # Add classes. We have only one class to add.
+        self.add_class("balloon", 1, "balloon")
 
+        # Train or validation dataset?
+        assert subset in ["train", "val"]
+        dataset_dir = os.path.join(dataset_dir, subset)
 
-def normalize(input_image, input_mask):
-    input_image = tf.cast(input_image, tf.float32) / 255.0
-    input_mask -= 1
-    return input_image, input_mask
+        # Load annotations
+        # VGG Image Annotator (up to version 1.6) saves each image in the form:
+        # { 'filename': '28503151_5b5b7ec140_b.jpg',
+        #   'regions': {
+        #       '0': {
+        #           'region_attributes': {},
+        #           'shape_attributes': {
+        #               'all_points_x': [...],
+        #               'all_points_y': [...],
+        #               'name': 'polygon'}},
+        #       ... more regions ...
+        #   },
+        #   'size': 100202
+        # }
+        # We mostly care about the x and y coordinates of each region
+        # Note: In VIA 2.0, regions was changed from a dict to a list.
+        annotations = json.load(open(os.path.join(dataset_dir, "via_region_data.json")))
+        annotations = list(annotations.values())  # don't need the dict keys
 
+        # The VIA tool saves images in the JSON even if they don't have any
+        # annotations. Skip unannotated images.
+        annotations = [a for a in annotations if a['regions']]
 
-def load_image_train(x):
-    image = tf.io.decode_raw(x['image'], tf.uint8)
-    mask = tf.io.decode_raw(x['mask'], tf.uint8)
+        # Add images
+        for a in annotations:
+            # Get the x, y coordinaets of points of the polygons that make up
+            # the outline of each object instance. These are stores in the
+            # shape_attributes (see json format above)
+            # The if condition is needed to support VIA versions 1.x and 2.x.
+            if type(a['regions']) is dict:
+                polygons = [r['shape_attributes'] for r in a['regions'].values()]
+            else:
+                polygons = [r['shape_attributes'] for r in a['regions']] 
 
-    image = tf.cast(image, tf.float32)
-    image = tf.reshape(image, [*IMAGE_SIZE, 3])
-    # label = tf.cast(mask, tf.uint8)
+            # load_mask() needs the image size to convert polygons to masks.
+            # Unfortunately, VIA doesn't include it in JSON, so we must read
+            # the image. This is only managable since the dataset is tiny.
+            image_path = os.path.join(dataset_dir, a['filename'])
+            image = skimage.io.imread(image_path)
+            height, width = image.shape[:2]
 
-    input_image, input_mask = normalize(image, mask)
-    return input_image, input_mask
+            self.add_image(
+                "balloon",
+                image_id=a['filename'],  # use file name as a unique image id
+                path=image_path,
+                width=width, height=height,
+                polygons=polygons)
 
-    # print(datapoint['image'].shape)
-    # input_image = tf.image.resize(datapoint['image'], IMAGE_SIZE)
-    # input_mask = tf.image.resize(datapoint['mask'], IMAGE_SIZE)
-    #
-    # input_image, input_mask = normalize(input_image, input_mask)
-    #
-    # return input_image, input_mask
+    def load_mask(self, image_id):
+        """Generate instance masks for an image.
+       Returns:
+        masks: A bool array of shape [height, width, instance count] with
+            one mask per instance.
+        class_ids: a 1D array of class IDs of the instance masks.
+        """
+        # If not a balloon dataset image, delegate to parent class.
+        image_info = self.image_info[image_id]
+        if image_info["source"] != "balloon":
+            return super(self.__class__, self).load_mask(image_id)
 
+        # Convert polygons to a bitmap mask of shape
+        # [height, width, instance_count]
+        info = self.image_info[image_id]
+        mask = np.zeros([info["height"], info["width"], len(info["polygons"])],
+                        dtype=np.uint8)
+        for i, p in enumerate(info["polygons"]):
+            # Get indexes of pixels inside the polygon and set them to 1
+            rr, cc = skimage.draw.polygon(p['all_points_y'], p['all_points_x'])
+            mask[rr, cc, i] = 1
 
-def load_data(buffer_size=32, **kwargs) -> Tuple[tf.data.Dataset, tf.data.Dataset]:
-    dataset = loadDataset()
-    # DATASET_SIZE = len(list(dataset))
-    DATASET_SIZE = 1462
-    print(DATASET_SIZE)
-    train_size = int(0.7 * DATASET_SIZE)
-    val_size = int(0.3 * DATASET_SIZE)
+        # Return mask, and array of class IDs of each instance. Since we have
+        # one class ID only, we return an array of 1s
+        return mask.astype(np.bool), np.ones([mask.shape[-1]], dtype=np.int32)
 
-    train_dataset = dataset.take(train_size)
-    test_dataset = dataset.skip(train_size)
-    #
-    # train = train_dataset.map(load_image_train, num_parallel_calls=tf.data.experimental.AUTOTUNE)
-    # test = test_dataset.map(load_image_train)
-    # train_dataset = train.cache().shuffle(buffer_size).take(train_size)
-    return train_dataset, test_dataset
-
-
-def _parse_function(example_proto):
-    feature = {'image': tf.io.FixedLenFeature([], tf.string),
-               'mask': tf.io.FixedLenFeature([], tf.string)}
-    example = tf.io.parse_single_example(example_proto, feature)
-
-    image, mask = decodeAllRaw(example)
-    return preprocess(image, mask)
-
-
-def decodeAllRaw(x):
-    image = tf.io.decode_raw(x['image'], tf.uint8)
-    mask = tf.io.decode_raw(x['mask'], tf.uint8)
-    return image, mask
-
-
-def preprocess(img, mask, size=512):  # 1024
-    img = tf.cast(img, dtype=tf.float32)
-    img = tf.reshape(img, [-1, size, size, 3]) / 255
-    mask = tf.reshape(mask, [-1, size, size, 1])
-    return img, mask
-
-
-def loadDataset():
-    raw_dataset = tf.data.TFRecordDataset('trainfull_norooms_unet.tfrecords')
-    parsed_dataset = raw_dataset.map(_parse_function)
-    return parsed_dataset
-
-
-if __name__ == "__main__":
-    train_dataset, validation_dataset = load_data()
-    rows = 10
-    fig, axs = plt.subplots(rows, 2, figsize=(8, 30))
-    for ax, (image, mask) in zip(axs, train_dataset.take(rows).batch(1)):
-        ax[0].matshow(np.array(image[0]).squeeze())
-        ax[2].matshow(np.array(mask[0]).squeeze(), cmap="gray")
-    plt.show()
+    def image_reference(self, image_id):
+        """Return the path of the image."""
+        info = self.image_info[image_id]
+        if info["source"] == "balloon":
+            return info["path"]
+        else:
+            super(self.__class__, self).image_reference(image_id)
