@@ -93,7 +93,6 @@ class Trainer:
                             validation_data=validation_dataset,
                             epochs=epochs,
                             callbacks=callbacks,
-                            verbose=2,
                             **fit_kwargs)
 
         self.evaluate(model, test_dataset, prediction_shape)

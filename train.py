@@ -38,7 +38,8 @@ def main():
                 train_dataset,
                 validation_dataset,
                 epochs=60,
-                batch_size=1)
+                batch_size=1,
+                verbose=2)
 
     unet_model.save("unet_model")
 
