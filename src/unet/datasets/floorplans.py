@@ -44,11 +44,11 @@ def load_image_train(x):
 
 
 def load_data(buffer_size=32, **kwargs) -> Tuple[tf.data.Dataset, tf.data.Dataset]:
-    dataset = loadDataset()
+    dataset = loadDataset().shuffle(buffer_size=32)
     DATASET_SIZE = len(list(dataset))
     print(DATASET_SIZE)
-    train_size = int(0.7 * DATASET_SIZE)
-    val_size = int(0.3 * DATASET_SIZE)
+    train_size = int(0.8 * DATASET_SIZE)
+    val_size = int(0.2 * DATASET_SIZE)
 
     train_dataset = dataset.take(train_size)
     test_dataset = dataset.skip(train_size)
