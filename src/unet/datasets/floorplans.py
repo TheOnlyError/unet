@@ -43,8 +43,8 @@ def load_image_train(x):
     # return input_image, input_mask
 
 
-def load_data(buffer_size=32, **kwargs) -> Tuple[tf.data.Dataset, tf.data.Dataset]:
-    dataset = loadDataset().shuffle(buffer_size=64)
+def load_data(buffer_size=64, **kwargs) -> Tuple[tf.data.Dataset, tf.data.Dataset]:
+    dataset = loadDataset().shuffle(buffer_size)
     DATASET_SIZE = len(list(dataset))
     print(DATASET_SIZE)
     train_size = int(0.8 * DATASET_SIZE)
@@ -82,6 +82,7 @@ def preprocess(img, mask, size=1024):  # 1024
 
 
 def loadDataset():
+    # raw_dataset = tf.data.TFRecordDataset('../../../data.tfrecords')
     raw_dataset = tf.data.TFRecordDataset('data.tfrecords')
     parsed_dataset = raw_dataset.map(_parse_function)
     return parsed_dataset
@@ -93,5 +94,5 @@ if __name__ == "__main__":
     fig, axs = plt.subplots(rows, 2, figsize=(8, 30))
     for ax, (image, mask) in zip(axs, train_dataset.take(rows).batch(1)):
         ax[0].matshow(np.array(image[0]).squeeze())
-        ax[2].matshow(np.array(mask[0]).squeeze(), cmap="gray")
+        ax[1].matshow(np.array(mask[0]).squeeze())
     plt.show()
