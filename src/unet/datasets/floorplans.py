@@ -44,7 +44,7 @@ def load_image_train(x):
 
 
 def load_data(buffer_size=32, **kwargs) -> Tuple[tf.data.Dataset, tf.data.Dataset]:
-    dataset = loadDataset().shuffle(buffer_size=32)
+    dataset = loadDataset().shuffle(buffer_size=64)
     DATASET_SIZE = len(list(dataset))
     print(DATASET_SIZE)
     train_size = int(0.8 * DATASET_SIZE)
@@ -74,7 +74,7 @@ def decodeAllRaw(x):
     return image, mask
 
 
-def preprocess(img, mask, size=512):  # 1024
+def preprocess(img, mask, size=1024):  # 1024
     img = tf.cast(img, dtype=tf.float32)
     img = tf.reshape(img, [size, size, 3]) / 255
     mask = tf.reshape(mask, [size, size, 1])

@@ -2,6 +2,7 @@ import logging
 import os
 import time
 
+import tensorflow as tf
 from tensorflow import losses, metrics
 
 from src import unet
@@ -12,7 +13,7 @@ logging.disable(logging.WARNING)
 
 
 def main():
-    # strategy = tf.distribute.MirroredStrategy()
+    strategy = tf.distribute.MirroredStrategy()
 
     # train_dataset, validation_dataset = loadDataset()
     train_dataset, validation_dataset = floorplans.load_data()
@@ -21,20 +22,20 @@ def main():
 
     # print(train_dataset)
 
-    # with strategy.scope():
-    channels = 3
-    classes = 3
-    LEARNING_RATE = 1e-4
-    unet_model = unet.build_model(channels=channels,
-                                  num_classes=classes,
-                                  layer_depth=5,
-                                  filters_root=64,
-                                  padding="same")
-    unet.finalize_model(unet_model,
-                        loss=losses.SparseCategoricalCrossentropy(),
-                        metrics=[metrics.SparseCategoricalAccuracy()],
-                        auc=False,
-                        learning_rate=LEARNING_RATE)
+    with strategy.scope():
+        channels = 3
+        classes = 3
+        LEARNING_RATE = 1e-4
+        unet_model = unet.build_model(channels=channels,
+                                      num_classes=classes,
+                                      layer_depth=5,
+                                      filters_root=64,
+                                      padding="same")
+        unet.finalize_model(unet_model,
+                            loss=losses.SparseCategoricalCrossentropy(),
+                            metrics=[metrics.SparseCategoricalAccuracy()],
+                            auc=False,
+                            learning_rate=LEARNING_RATE)
 
 
     trainer = unet.Trainer(checkpoint_callback=False)
