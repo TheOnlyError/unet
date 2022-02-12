@@ -22,10 +22,10 @@ def main():
         multi = mpimg.imread('resources/multi.jpg')
         # image = mpimg.imread('resources/multi_large.jpg')
         # image = mpimg.imread('resources/multi_largest.jpg')
-        # image = mpimg.imread('resources/m_sampled.jpg')
+        m_sampled = mpimg.imread('resources/m_sampled.jpg')
         mplan_s = mpimg.imread('resources/mplan_s.jpg')
 
-        images = [multi, mplan_s]
+        images = [single, multi, m_sampled, mplan_s]
         for image in images:
             image = np.expand_dims(image, axis=0)
             prediction = unet_model.predict(image)
