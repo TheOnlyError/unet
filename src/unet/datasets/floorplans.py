@@ -43,7 +43,7 @@ def load_image_train(x):
     # return input_image, input_mask
 
 
-def load_data(buffer_size=64, **kwargs) -> Tuple[tf.data.Dataset, tf.data.Dataset]:
+def load_data(buffer_size=400, **kwargs) -> Tuple[tf.data.Dataset, tf.data.Dataset]:
     dataset = loadDataset().shuffle(buffer_size)
     DATASET_SIZE = len(list(dataset))
     print(DATASET_SIZE)
