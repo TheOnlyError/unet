@@ -2,9 +2,11 @@ import logging
 import os
 import time
 
+import tensorflow as tf
 from tensorflow import losses, metrics
 
 from src import unet
+from src.unet import custom_objects
 from src.unet.datasets import floorplans
 
 os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
@@ -17,11 +19,14 @@ def main():
     channels = 3
     classes = 3
     LEARNING_RATE = 1e-4
-    unet_model = unet.build_model(channels=channels,
-                                  num_classes=classes,
-                                  layer_depth=5,
-                                  filters_root=64,
-                                  padding="same")
+    # unet_model = unet.build_model(channels=channels,
+    #                               num_classes=classes,
+    #                               layer_depth=5,
+    #                               filters_root=64,
+    #                               padding="same")
+
+    unet_model = tf.keras.models.load_model('unet_model', custom_objects=custom_objects) # 160 + 80
+
     unet.finalize_model(unet_model,
                         loss=losses.SparseCategoricalCrossentropy(),
                         metrics=[metrics.SparseCategoricalAccuracy()],
@@ -37,7 +42,7 @@ def main():
     trainer = unet.Trainer(checkpoint_callback=False)
     trainer.fit(unet_model,
                 train_dataset,
-                epochs=160,
+                epochs=80,
                 batch_size=1,
                 verbose=2)
 

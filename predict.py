@@ -18,18 +18,25 @@ def main():
 
     predict = True
     if predict:
-        # image = mpimg.imread('resources/single.jpg')
+        single = mpimg.imread('resources/single.jpg')
+        multi = mpimg.imread('resources/multi.jpg')
         # image = mpimg.imread('resources/multi_large.jpg')
         # image = mpimg.imread('resources/multi_largest.jpg')
         # image = mpimg.imread('resources/m_sampled.jpg')
-        image = mpimg.imread('resources/mplan_s.jpg')
-        # image = cv2.resize(image, dsize=(512, 512), interpolation=cv2.INTER_CUBIC)
-        image = np.expand_dims(image, axis=0)
-        prediction = unet_model.predict(image)
-        result = prediction[0].argmax(axis=-1)
+        mplan_s = mpimg.imread('resources/mplan_s.jpg')
 
-        timestr = time.strftime("%Y%m%d-%H%M%S")
-        mpimg.imsave("result" + timestr + ".jpg", result.astype(np.uint8))
+        images = [multi, mplan_s]
+        for image in images:
+            image = np.expand_dims(image, axis=0)
+            prediction = unet_model.predict(image)
+            result = prediction[0].argmax(axis=-1)
+
+            result[result == 1] = 10
+            result[result == 0] = 20
+            result[result == 2] = 30
+
+            timestr = time.strftime("%Y%m%d-%H%M%S")
+            mpimg.imsave("result" + timestr + ".jpg", result.astype(np.uint8))
     else:
         train_dataset, validation_dataset = floorplans.load_data()
         rows = 3
