@@ -23,10 +23,11 @@ def main():
         # image = mpimg.imread('resources/multi_large.jpg')
         # image = mpimg.imread('resources/multi_largest.jpg')
         m_sampled = mpimg.imread('resources/m_sampled.jpg')
+        m_sampled2 = mpimg.imread('resources/m_sampled2.jpg')
         mplan_s = mpimg.imread('resources/mplan_s.jpg')
 
-        images = [single, multi, m_sampled, mplan_s]
-        for image in images:
+        images = [single, multi, m_sampled2, m_sampled, mplan_s]
+        for i, image in enumerate(images):
             image = np.expand_dims(image, axis=0)
             prediction = unet_model.predict(image)
             result = prediction[0].argmax(axis=-1)
@@ -36,7 +37,7 @@ def main():
             result[result == 2] = 30
 
             timestr = time.strftime("%Y%m%d-%H%M%S")
-            mpimg.imsave("result" + timestr + ".jpg", result.astype(np.uint8))
+            mpimg.imsave("result" + timestr + str(i) + ".jpg", result.astype(np.uint8))
     else:
         train_dataset, validation_dataset = floorplans.load_data()
         rows = 3
