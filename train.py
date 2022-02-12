@@ -27,11 +27,11 @@ def main():
 
     unet_model = tf.keras.models.load_model('unet_model', custom_objects=custom_objects) # 160 + 80
 
-    unet.finalize_model(unet_model,
-                        loss=losses.SparseCategoricalCrossentropy(),
-                        metrics=[metrics.SparseCategoricalAccuracy()],
-                        auc=False,
-                        learning_rate=LEARNING_RATE)
+    # unet.finalize_model(unet_model,
+    #                     loss=losses.SparseCategoricalCrossentropy(),
+    #                     metrics=[metrics.SparseCategoricalAccuracy()],
+    #                     auc=False,
+    #                     learning_rate=LEARNING_RATE)
 
 
     # train_dataset, validation_dataset = loadDataset()
