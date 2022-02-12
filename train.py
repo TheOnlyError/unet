@@ -40,6 +40,7 @@ def main():
     trainer = unet.Trainer(checkpoint_callback=False)
     trainer.fit(unet_model,
                 train_dataset,
+                validation_dataset,
                 epochs=160,
                 batch_size=1,
                 verbose=2)
