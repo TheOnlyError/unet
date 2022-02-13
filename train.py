@@ -18,7 +18,7 @@ def main():
     # with strategy.scope():
     channels = 3
     classes = 3
-    LEARNING_RATE = 1e-4
+    LEARNING_RATE = 1e-3
     unet_model = unet.build_model(channels=channels,
                                   num_classes=classes,
                                   layer_depth=5,
@@ -42,7 +42,7 @@ def main():
                 train_dataset,
                 validation_dataset,
                 epochs=160,
-                batch_size=2,
+                batch_size=1,
                 verbose=2)
 
     unet_model.save("unet_model")
