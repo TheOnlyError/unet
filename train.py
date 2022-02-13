@@ -37,18 +37,13 @@ def main():
     # train_dataset, validation_dataset = circles.load_data(100, nx=200, ny=200, splits=(0.7, 0.3))
     # train_dataset, validation_dataset = oxford_iiit_pet.load_data()
 
-    class_weight = {0: 1.05,
-                    1: 61.69,
-                    2: 28.33}
-
     trainer = unet.Trainer(checkpoint_callback=False)
     trainer.fit(unet_model,
                 train_dataset,
                 validation_dataset,
                 epochs=160,
                 batch_size=2,
-                verbose=2,
-                class_weight=class_weight)
+                verbose=2)
 
     unet_model.save("unet_model")
 
