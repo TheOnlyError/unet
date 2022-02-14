@@ -1,47 +1,8 @@
 from typing import Tuple
 
-import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
-
-size = 512
-IMAGE_SIZE = (512, 512)
-channels = 3
-classes = 3
-
-
-def decode_image(image):
-    image = tf.image.decode_jpeg(image, channels=3)
-    image = tf.cast(image, tf.float32)
-    image = tf.reshape(image, [*IMAGE_SIZE, 3])
-    return image
-
-
-def normalize(input_image, input_mask):
-    input_image = tf.cast(input_image, tf.float32) / 255.0
-    input_mask -= 1
-    return input_image, input_mask
-
-
-def load_image_train(x):
-    image = tf.io.decode_raw(x['image'], tf.uint8)
-    mask = tf.io.decode_raw(x['mask'], tf.uint8)
-
-    image = tf.cast(image, tf.float32)
-    image = tf.reshape(image, [*IMAGE_SIZE, 3])
-    # label = tf.cast(mask, tf.uint8)
-
-    input_image, input_mask = normalize(image, mask)
-    return input_image, input_mask
-
-    # print(datapoint['image'].shape)
-    # input_image = tf.image.resize(datapoint['image'], IMAGE_SIZE)
-    # input_mask = tf.image.resize(datapoint['mask'], IMAGE_SIZE)
-    #
-    # input_image, input_mask = normalize(input_image, input_mask)
-    #
-    # return input_image, input_mask
-
+import matplotlib.pyplot as plt
 
 def load_data(buffer_size=400, **kwargs) -> Tuple[tf.data.Dataset, tf.data.Dataset]:
     dataset = loadDataset().shuffle(buffer_size)
@@ -90,6 +51,15 @@ def loadDataset():
 
 if __name__ == "__main__":
     train_dataset, validation_dataset = load_data()
+    counts = [0, 0, 0]
+    classes = 3
+    for (image, mask) in train_dataset.batch(1):
+        for c in range(classes):
+            counts[c] += np.count_nonzero(mask == c)
+    print(counts)
+    weights = sum(counts) / np.array(counts)
+    print(weights)
+
     rows = 10
     fig, axs = plt.subplots(rows, 2, figsize=(8, 30))
     for ax, (image, mask) in zip(axs, train_dataset.take(rows).batch(1)):

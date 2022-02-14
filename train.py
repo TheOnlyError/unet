@@ -18,7 +18,7 @@ def main():
     # with strategy.scope():
     channels = 3
     classes = 3
-    LEARNING_RATE = 1e-3
+    LEARNING_RATE = 1e-4
     unet_model = unet.build_model(channels=channels,
                                   num_classes=classes,
                                   layer_depth=5,
@@ -41,7 +41,7 @@ def main():
     trainer.fit(unet_model,
                 train_dataset,
                 validation_dataset,
-                epochs=160,
+                epochs=240,
                 batch_size=1,
                 verbose=2)
 
