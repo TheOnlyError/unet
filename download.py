@@ -8,7 +8,7 @@ if __name__ == "__main__":
 
     arg = sys.argv[1]
     if arg == "train":
-        url = "https://drive.google.com/uc?id=1Yy03NNeiDzrWz28dHHu_xHMAlpZJpXIf"
+        url = "https://drive.google.com/uc?id=1l46rxcCpQSTHIx_11uxqfaSvmNTO3odi"
     elif arg == "test":
         url = "https://drive.google.com/uc?id=1vPBAXoqgOtfUPFK0bu7-1rF-lWLVpsYo"
     elif arg == "buildings":
