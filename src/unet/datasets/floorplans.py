@@ -35,7 +35,7 @@ def decodeAllRaw(x):
     return image, mask
 
 
-def preprocess(img, mask, size=1024):  # 1024
+def preprocess(img, mask, size=512):  # 1024
     img = tf.cast(img, dtype=tf.float32)
     img = tf.reshape(img, [size, size, 3]) / 255
     mask = tf.reshape(mask, [size, size, 1])
@@ -43,22 +43,22 @@ def preprocess(img, mask, size=1024):  # 1024
 
 
 def loadDataset():
-    # raw_dataset = tf.data.TFRecordDataset('../../../data.tfrecords')
-    raw_dataset = tf.data.TFRecordDataset('data.tfrecords')
+    raw_dataset = tf.data.TFRecordDataset('../../../data.tfrecords')
+    # raw_dataset = tf.data.TFRecordDataset('data.tfrecords')
     parsed_dataset = raw_dataset.map(_parse_function)
     return parsed_dataset
 
 
 if __name__ == "__main__":
     train_dataset, validation_dataset = load_data()
-    counts = [0, 0, 0]
-    classes = 3
-    for (image, mask) in train_dataset.batch(1):
-        for c in range(classes):
-            counts[c] += np.count_nonzero(mask == c)
-    print(counts)
-    weights = sum(counts) / np.array(counts)
-    print(weights)
+    # counts = [0, 0, 0]
+    # classes = 3
+    # for (image, mask) in train_dataset.batch(1):
+    #     for c in range(classes):
+    #         counts[c] += np.count_nonzero(mask == c)
+    # print(counts)
+    # weights = sum(counts) / np.array(counts)
+    # print(weights)
 
     rows = 10
     fig, axs = plt.subplots(rows, 2, figsize=(8, 30))
