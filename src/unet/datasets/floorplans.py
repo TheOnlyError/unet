@@ -22,7 +22,7 @@ def load_data(buffer_size=400, **kwargs) -> Tuple[tf.data.Dataset, tf.data.Datas
 
 def _parse_function(example_proto):
     feature = {'image': tf.io.FixedLenFeature([], tf.string),
-               'mask': tf.io.FixedLenFeature([], tf.string)}
+               'boundary': tf.io.FixedLenFeature([], tf.string)}
     example = tf.io.parse_single_example(example_proto, feature)
 
     image, mask = decodeAllRaw(example)
@@ -31,7 +31,7 @@ def _parse_function(example_proto):
 
 def decodeAllRaw(x):
     image = tf.io.decode_raw(x['image'], tf.uint8)
-    mask = tf.io.decode_raw(x['mask'], tf.uint8)
+    mask = tf.io.decode_raw(x['boundary'], tf.uint8)
     return image, mask
 
 
