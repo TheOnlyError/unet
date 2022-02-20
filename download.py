@@ -7,10 +7,8 @@ if __name__ == "__main__":
         exit()
 
     arg = sys.argv[1]
-    if arg == "train":
-        url = "https://drive.google.com/uc?id=1l46rxcCpQSTHIx_11uxqfaSvmNTO3odi"
-    elif arg == "test":
-        url = "https://drive.google.com/uc?id=1vPBAXoqgOtfUPFK0bu7-1rF-lWLVpsYo"
+    if arg == "rooms":
+        url = "https://drive.google.com/uc?id=1YHYxe0EpstlZEN20VN-TbKcVjuMd9T4r"
     elif arg == "buildings":
         url = "https://drive.google.com/uc?id=10nahGzZtTAgAPic2lYBB4pRmAb-rxX9-"
     elif arg == "rooms_buildings":
