@@ -43,8 +43,8 @@ def preprocess(img, mask, size=512):  # 1024
 
 
 def loadDataset():
-    raw_dataset = tf.data.TFRecordDataset('../../../data.tfrecords')
-    # raw_dataset = tf.data.TFRecordDataset('data.tfrecords')
+    # raw_dataset = tf.data.TFRecordDataset('../../../data.tfrecords')
+    raw_dataset = tf.data.TFRecordDataset('data.tfrecords')
     parsed_dataset = raw_dataset.map(_parse_function)
     return parsed_dataset
 
