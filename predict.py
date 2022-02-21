@@ -9,7 +9,7 @@ from src.unet import custom_objects
 from src.unet.datasets import floorplans
 from src.unet.unet import *
 
-os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
+# os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
 logging.disable(logging.WARNING)
 
@@ -28,7 +28,12 @@ def main():
 
         images = [single, multi, m_sampled2, m_sampled, mplan_s]
         for i, image in enumerate(images):
-            image = np.expand_dims(image, axis=0)
+            shp = image.shape
+            image = tf.convert_to_tensor(image, dtype=tf.uint8)
+            # img = tf.image.resize(img, [size, size])
+            image = tf.cast(image, dtype=tf.float32)
+            image = tf.reshape(image, [-1, shp[0], shp[1], 3]) / 255
+
             prediction = unet_model.predict(image)
             result = prediction[0].argmax(axis=-1)
 
