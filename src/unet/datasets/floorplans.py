@@ -62,7 +62,7 @@ if __name__ == "__main__":
 
     rows = 10
     fig, axs = plt.subplots(rows, 2, figsize=(8, 30))
-    for ax, (image, mask) in zip(axs, train_dataset.take(rows).batch(1)):
+    for ax, (image, mask) in zip(axs, validation_dataset.take(rows).batch(1)):
         ax[0].matshow(np.array(image[0]).squeeze())
         ax[1].matshow(np.array(mask[0]).squeeze())
     plt.show()

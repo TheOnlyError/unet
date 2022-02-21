@@ -16,21 +16,21 @@ logging.disable(logging.WARNING)
 def main():
     # strategy = tf.distribute.MirroredStrategy()
     # with strategy.scope():
-    channels = 3
-    classes = 3
-    LEARNING_RATE = 1e-4
-    unet_model = unet.build_model(channels=channels,
-                                  num_classes=classes,
-                                  layer_depth=5,
-                                  filters_root=64,
-                                  padding="same")
-    unet.finalize_model(unet_model,
-                        loss=losses.SparseCategoricalCrossentropy(),
-                        metrics=[metrics.SparseCategoricalAccuracy()],
-                        auc=False,
-                        learning_rate=LEARNING_RATE)
+    # channels = 3
+    # classes = 3
+    # LEARNING_RATE = 1e-4
+    # unet_model = unet.build_model(channels=channels,
+    #                               num_classes=classes,
+    #                               layer_depth=5,
+    #                               filters_root=64,
+    #                               padding="same")
+    # unet.finalize_model(unet_model,
+    #                     loss=losses.SparseCategoricalCrossentropy(),
+    #                     metrics=[metrics.SparseCategoricalAccuracy()],
+    #                     auc=False,
+    #                     learning_rate=LEARNING_RATE)
 
-    # unet_model = tf.keras.models.load_model('unet_model', custom_objects=custom_objects) # 160 + 80
+    unet_model = tf.keras.models.load_model('unet_model', custom_objects=custom_objects) # 80 + 80
 
     train_dataset, validation_dataset = floorplans.load_data()
 

@@ -6,7 +6,7 @@ import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
 
 from src.unet import custom_objects
-from src.unet.datasets import circles, floorplans
+from src.unet.datasets import floorplans
 from src.unet.unet import *
 
 os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
