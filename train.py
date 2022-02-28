@@ -38,7 +38,7 @@ def main():
     trainer.fit(unet_model,
                 train_dataset,
                 validation_dataset,
-                epochs=60,
+                epochs=240,
                 batch_size=1,
                 verbose=2)
 

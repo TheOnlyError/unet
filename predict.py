@@ -9,7 +9,7 @@ from src.unet import custom_objects
 from src.unet.datasets import floorplans
 from src.unet.unet import *
 
-os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
+# os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
 logging.disable(logging.WARNING)
 
@@ -17,7 +17,7 @@ def main():
     # unet_model = tf.keras.models.load_model('unet_model', custom_objects=custom_objects)
     unet_model = tf.keras.models.load_model('unet_pp_model')
 
-    predict = False
+    predict = True
     if predict:
         single = mpimg.imread('resources/single.jpg')
         multi = mpimg.imread('resources/multi.jpg')
@@ -32,7 +32,7 @@ def main():
             shp = image.shape
             image = tf.convert_to_tensor(image, dtype=tf.uint8)
             image = tf.cast(image, dtype=tf.float32)
-            image = tf.reshape(image, [1, shp[0], shp[1], 3]) / 255
+            image = tf.reshape(image, [-1, 512, 512, 3]) / 255
 
             prediction = unet_model.predict(image)
             result = prediction[0].argmax(axis=-1)

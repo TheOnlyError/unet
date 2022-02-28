@@ -15,15 +15,15 @@ logging.disable(logging.WARNING)
 
 def main():
     LEARNING_RATE = 1e-4
-    # unet_model = xnet.Xnet(backbone_name='efficientnetb0', classes=3)
-    #
-    # unet_model.compile(loss=losses.SparseCategoricalCrossentropy(),
-    #               optimizer=Adam(learning_rate=LEARNING_RATE),
-    #               metrics=[metrics.SparseCategoricalAccuracy()],
-    #               )
+    unet_model = xnet.Xnet(backbone_name='efficientnetb0', classes=3)
+
+    unet_model.compile(loss=losses.SparseCategoricalCrossentropy(),
+                  optimizer=Adam(learning_rate=LEARNING_RATE),
+                  metrics=[metrics.SparseCategoricalAccuracy()],
+                  )
 
     # unet_model = tf.keras.models.load_model('unet_model', custom_objects=custom_objects) # 160 + 80
-    unet_model = tf.keras.models.load_model('unet_pp_model') # 80
+    # unet_model = tf.keras.models.load_model('unet_pp_model') # 80
 
     train_dataset, validation_dataset = floorplans.load_data()
 
@@ -31,7 +31,7 @@ def main():
     trainer.fit(unet_model,
                 train_dataset,
                 validation_dataset,
-                epochs=160,
+                epochs=240,
                 batch_size=1,
                 verbose=2)
 
