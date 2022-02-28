@@ -6,7 +6,6 @@ import tensorflow as tf
 from tensorflow import losses, metrics
 
 from src import unet, xnet
-from src.unet import custom_objects
 from src.unet.datasets import floorplans
 from tensorflow.keras.optimizers import Adam
 
@@ -35,7 +34,7 @@ def main():
                 batch_size=1,
                 verbose=2)
 
-    unet_model.save("unet_model")
+    unet_model.save("unet_pp_model")
 
 if __name__ == "__main__":
     tic = time.time()
