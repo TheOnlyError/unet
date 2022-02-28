@@ -14,7 +14,8 @@ os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
 logging.disable(logging.WARNING)
 
 def main():
-    unet_model = tf.keras.models.load_model('unet_model', custom_objects=custom_objects)
+    # unet_model = tf.keras.models.load_model('unet_model', custom_objects=custom_objects)
+    unet_model = tf.keras.models.load_model('unet_pp_model', custom_objects=custom_objects)
 
     predict = True
     if predict:
