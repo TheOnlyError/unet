@@ -3,7 +3,7 @@ from tensorflow.keras.applications import (EfficientNetB0, EfficientNetB1,
                                            EfficientNetB4, EfficientNetB5,
                                            EfficientNetB6, EfficientNetB7)
 
-from segmentation_models.xnet.builder import build_xnet
+from src.xnet.builder import build_xnet
 
 backbones = {
     "efficientnetb0": EfficientNetB0,

@@ -4,7 +4,7 @@ from tensorflow.keras.models import Model
 
 from .blocks import Transpose2D_block
 from .blocks import Upsample2D_block
-from ..utils import get_layer_number, to_tuple
+from .utils import get_layer_number, to_tuple
 
 def build_xnet(backbone, classes, skip_connection_layers,
                decoder_filters=(256, 128, 64, 32, 16),

@@ -1,7 +1,3 @@
-import numpy as np
-import tensorflow as tf
-from tensorflow import keras
-from tensorflow.keras import Model, Input
 from tensorflow.keras.layers import Conv2DTranspose
 from tensorflow.keras.layers import UpSampling2D
 from tensorflow.keras.layers import Conv2D
