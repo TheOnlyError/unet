@@ -47,7 +47,7 @@ DEFAULT_SKIP_CONNECTIONS = {
 }
 
 
-def Xnet(backbone_name='efficientnetb0',
+def Xnet(backbone_name='efficientnetb5',
          input_shape=(None, None, 3),
          input_tensor=None,
          encoder_weights='imagenet',

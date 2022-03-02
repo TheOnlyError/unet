@@ -13,6 +13,36 @@ from src.unet.unet import *
 logging.disable(logging.WARNING)
 
 
+def pad_to(x, stride):
+    h, w = x.shape[:2]
+
+    if h % stride > 0:
+        new_h = h + stride - h % stride
+    else:
+        new_h = h
+    if w % stride > 0:
+        new_w = w + stride - w % stride
+    else:
+        new_w = w
+    lh, uh = int((new_h - h) / 2), int(new_h - h) - int((new_h - h) / 2)
+    lw, uw = int((new_w - w) / 2), int(new_w - w) - int((new_w - w) / 2)
+    pads = tf.constant([[lh, uh], [lw, uw], [0,0]])
+
+    # zero-padding by default.
+    # See others at https://pytorch.org/docs/stable/nn.functional.html#torch.nn.functional.pad
+    out = tf.pad(x, pads, "CONSTANT", 255)
+
+    return out, pads
+
+
+def unpad(x, pad):
+    if pad[2] + pad[3] > 0:
+        x = x[:, :, pad[2]:-pad[3], :]
+    if pad[0] + pad[1] > 0:
+        x = x[:, :, :, pad[0]:-pad[1]]
+    return x
+
+
 def main():
     # unet_model = tf.keras.models.load_model('unet_model', custom_objects=custom_objects)
     unet_model = tf.keras.models.load_model('unet_pp_model', custom_objects=custom_objects)
@@ -21,20 +51,25 @@ def main():
     if predict:
         single = mpimg.imread('resources/single.jpg')
         multi = mpimg.imread('resources/multi.jpg')
-        # image = mpimg.imread('resources/multi_large.jpg')
-        # image = mpimg.imread('resources/multi_largest.jpg')
+        # # image = mpimg.imread('resources/multi_large.jpg')
+        # # image = mpimg.imread('resources/multi_largest.jpg')
         m_sampled = mpimg.imread('resources/m_sampled.jpg')
         m_sampled2 = mpimg.imread('resources/m_sampled2.jpg')
         mplan_s = mpimg.imread('resources/mplan_s.jpg')
 
-        images = [multi, m_sampled2, m_sampled, mplan_s]
+        images = [single, multi, m_sampled, m_sampled2, mplan_s]
         for i, image in enumerate(images):
             shp = image.shape
-            size = min(shp[0], shp[1])
-            image = tf.convert_to_tensor(image, dtype=tf.uint8)
-            image = tf.image.resize(image, [size, size], method='nearest')
+
+            plusplus = True
+            if plusplus:
+                image = tf.convert_to_tensor(image, dtype=tf.uint8)
+                image, pads = pad_to(image, 32)
+                shp = image.shape
+            else:
+                image = tf.convert_to_tensor(image, dtype=tf.uint8)
             image = tf.cast(image, dtype=tf.float32)
-            image = tf.reshape(image, [-1, size, size, 3]) / 255
+            image = tf.reshape(image, [-1, shp[0], shp[1], 3]) / 255
 
             prediction = unet_model.predict(image)
             result = prediction[0].argmax(axis=-1)
