@@ -1,5 +1,4 @@
 import logging
-import os
 import time
 
 import matplotlib.image as mpimg
@@ -10,12 +9,13 @@ from src.unet.datasets import floorplans
 from src.unet.unet import *
 
 # os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
-os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
+# os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
 logging.disable(logging.WARNING)
+
 
 def main():
     # unet_model = tf.keras.models.load_model('unet_model', custom_objects=custom_objects)
-    unet_model = tf.keras.models.load_model('unet_pp_model')
+    unet_model = tf.keras.models.load_model('unet_pp_model', custom_objects=custom_objects)
 
     predict = True
     if predict:
@@ -27,12 +27,14 @@ def main():
         m_sampled2 = mpimg.imread('resources/m_sampled2.jpg')
         mplan_s = mpimg.imread('resources/mplan_s.jpg')
 
-        images = [single, multi, m_sampled2, m_sampled, mplan_s]
+        images = [multi, m_sampled2, m_sampled, mplan_s]
         for i, image in enumerate(images):
             shp = image.shape
+            size = min(shp[0], shp[1])
             image = tf.convert_to_tensor(image, dtype=tf.uint8)
+            image = tf.image.resize(image, [size, size], method='nearest')
             image = tf.cast(image, dtype=tf.float32)
-            image = tf.reshape(image, [-1, 512, 512, 3]) / 255
+            image = tf.reshape(image, [-1, size, size, 3]) / 255
 
             prediction = unet_model.predict(image)
             result = prediction[0].argmax(axis=-1)
@@ -47,7 +49,7 @@ def main():
         train_dataset, validation_dataset = floorplans.load_data()
         rows = 3
         for t in range(3):
-            fig, axs = plt.subplots(rows, 3, figsize=(8, rows*3))
+            fig, axs = plt.subplots(rows, 3, figsize=(8, rows * 3))
             for ax, (image, label) in zip(axs, validation_dataset.shuffle(64).take(rows).batch(1)):
                 prediction = unet_model.predict(image)
                 p = prediction[0].argmax(axis=-1)

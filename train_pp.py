@@ -3,13 +3,14 @@ import os
 import time
 
 import tensorflow as tf
+
 from tensorflow import losses, metrics
 
 from src import unet, xnet
 from src.unet.datasets import floorplans
 from tensorflow.keras.optimizers import Adam
 
-os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
+# os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
 logging.disable(logging.WARNING)
 
 
