@@ -44,8 +44,11 @@ def unpad(x, pad):
 
 
 def main():
-    # unet_model = tf.keras.models.load_model('unet_model', custom_objects=custom_objects)
-    unet_model = tf.keras.models.load_model('unet_pp_model', custom_objects=custom_objects)
+    plusplus = True
+    if plusplus:
+        unet_model = tf.keras.models.load_model('unet_pp_model', custom_objects=custom_objects)
+    else:
+        unet_model = tf.keras.models.load_model('unet_model', custom_objects=custom_objects)
 
     predict = True
     if predict:
@@ -60,14 +63,12 @@ def main():
         images = [single, multi, m_sampled, m_sampled2, mplan_s]
         for i, image in enumerate(images):
             shp = image.shape
+            image = tf.convert_to_tensor(image, dtype=tf.uint8)
 
-            plusplus = True
+
             if plusplus:
-                image = tf.convert_to_tensor(image, dtype=tf.uint8)
                 image, pads = pad_to(image, 32)
                 shp = image.shape
-            else:
-                image = tf.convert_to_tensor(image, dtype=tf.uint8)
             image = tf.cast(image, dtype=tf.float32)
             image = tf.reshape(image, [-1, shp[0], shp[1], 3]) / 255
 
