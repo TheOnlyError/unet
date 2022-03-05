@@ -47,19 +47,19 @@ DEFAULT_SKIP_CONNECTIONS = {
 }
 
 
-def Xnet(backbone_name='efficientnetb5',
+def Xnet(backbone_name='efficientnetb0',
          input_shape=(None, None, 3),
          input_tensor=None,
          encoder_weights='imagenet',
          freeze_encoder=False,
          skip_connections='default',
-         decoder_block_type='transpose',
+         decoder_block_type='upsampling',
          decoder_filters=(512, 256, 128, 64, 32),
          decoder_use_batchnorm=True,
          n_upsample_blocks=5,
          upsample_rates=(2, 2, 2, 2, 2),
          classes=1,
-         activation='sigmoid'):
+         activation='softmax'):
     backbone = get_backbone(backbone_name,
                             input_shape=input_shape,
                             input_tensor=input_tensor,

@@ -60,7 +60,7 @@ def main():
         m_sampled2 = mpimg.imread('resources/m_sampled2.jpg')
         mplan_s = mpimg.imread('resources/mplan_s.jpg')
 
-        images = [mplan_s]
+        images = [single, multi, m_sampled, m_sampled2, mplan_s]
         for i, image in enumerate(images):
             shp = image.shape
             image = tf.convert_to_tensor(image, dtype=tf.uint8)
