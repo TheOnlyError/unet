@@ -11,6 +11,7 @@ from src.unet.datasets import floorplans
 from tensorflow.keras.optimizers import Adam
 
 os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 logging.disable(logging.WARNING)
 
 
