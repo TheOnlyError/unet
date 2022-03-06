@@ -1,4 +1,5 @@
 import logging
+import os
 import time
 
 import matplotlib.image as mpimg
@@ -9,8 +10,11 @@ from src.unet.datasets import floorplans
 from src.unet.unet import *
 
 # os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
-# os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
+os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
 logging.disable(logging.WARNING)
+
+from PIL import Image
+Image.MAX_IMAGE_PIXELS = None
 
 
 def pad_to(x, stride):
@@ -26,7 +30,7 @@ def pad_to(x, stride):
         new_w = w
     lh, uh = int((new_h - h) / 2), int(new_h - h) - int((new_h - h) / 2)
     lw, uw = int((new_w - w) / 2), int(new_w - w) - int((new_w - w) / 2)
-    pads = tf.constant([[lh, uh], [lw, uw], [0,0]])
+    pads = tf.constant([[lh, uh], [lw, uw], [0, 0]])
 
     # zero-padding by default.
     # See others at https://pytorch.org/docs/stable/nn.functional.html#torch.nn.functional.pad
@@ -59,12 +63,13 @@ def main():
         m_sampled = mpimg.imread('resources/m_sampled.jpg')
         m_sampled2 = mpimg.imread('resources/m_sampled2.jpg')
         mplan_s = mpimg.imread('resources/mplan_s.jpg')
+        gv = mpimg.imread('resources/gv2.jpg')
 
         images = [single, multi, m_sampled, m_sampled2, mplan_s]
+        # images = [single, multi]
         for i, image in enumerate(images):
             shp = image.shape
             image = tf.convert_to_tensor(image, dtype=tf.uint8)
-
 
             if plusplus:
                 image, pads = pad_to(image, 32)
