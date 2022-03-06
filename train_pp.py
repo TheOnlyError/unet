@@ -32,7 +32,7 @@ def main():
     trainer.fit(unet_model,
                 train_dataset,
                 validation_dataset,
-                epochs=120,
+                epochs=60,
                 batch_size=1,
                 verbose=2)
 
