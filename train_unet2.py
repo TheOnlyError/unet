@@ -12,6 +12,7 @@ import src.segmentation_models as sm
 from src.unet.datasets import floorplans
 
 os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 logging.disable(logging.WARNING)
 
 
