@@ -11,15 +11,13 @@ from src.unet.datasets import floorplans
 from tensorflow.keras.optimizers import Adam
 
 os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
-# os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+# os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 logging.disable(logging.WARNING)
 
 
 def main():
-    tf.keras.backend.set_image_data_format('channels_last')
-
     LEARNING_RATE = 1e-4
-    unet_model = xnet.Xnet(backbone_name='efficientnetb5', classes=3)
+    unet_model = xnet.Xnet(backbone_name='efficientnetb1', classes=3)
 
     unet_model.compile(loss=losses.SparseCategoricalCrossentropy(),
                   optimizer=Adam(learning_rate=LEARNING_RATE),
