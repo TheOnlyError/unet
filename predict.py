@@ -48,25 +48,26 @@ def unpad(x, pad):
 
 
 def main():
-    plusplus = False
+    plusplus = True
     if plusplus:
+        # unet_model = tf.keras.models.load_model('unet2_model', custom_objects=custom_objects)
         unet_model = tf.keras.models.load_model('unet_pp_model', custom_objects=custom_objects)
     else:
         unet_model = tf.keras.models.load_model('unet_model', custom_objects=custom_objects)
 
-    predict = False
+    predict = True
     if predict:
         single = mpimg.imread('resources/single.jpg')
-        # multi = mpimg.imread('resources/multi.jpg')
+        multi = mpimg.imread('resources/multi.jpg')
         # # image = mpimg.imread('resources/multi_large.jpg')
         # # image = mpimg.imread('resources/multi_largest.jpg')
         # m_sampled = mpimg.imread('resources/m_sampled.jpg')
-        # m_sampled2 = mpimg.imread('resources/m_sampled2.jpg')
-        # mplan_s = mpimg.imread('resources/mplan_s.jpg')
+        m_sampled2 = mpimg.imread('resources/m_sampled2.jpg')
+        mplan_s = mpimg.imread('resources/mplan_s.jpg')
         # gv = mpimg.imread('resources/gv2.jpg')
 
-        # images = [single, multi, m_sampled, m_sampled2, mplan_s]
-        images = [single]
+        images = [single, multi, m_sampled2, mplan_s]
+        # images = [single]
         for i, image in enumerate(images):
             shp = image.shape
             image = tf.convert_to_tensor(image, dtype=tf.uint8)

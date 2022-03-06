@@ -35,7 +35,7 @@ def decodeAllRaw(x):
     return image, mask
 
 
-def preprocess(img, mask, size=512):  # 1024
+def preprocess(img, mask, size=1024):  # 1024
     img = tf.cast(img, dtype=tf.float32)
     img = tf.reshape(img, [size, size, 3]) / 255
     mask = tf.reshape(mask, [size, size, 1])
