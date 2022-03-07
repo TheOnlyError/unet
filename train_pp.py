@@ -14,6 +14,9 @@ os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
 # os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 logging.disable(logging.WARNING)
 
+physical_devices = tf.config.experimental.list_physical_devices('GPU')
+tf.config.experimental.set_memory_growth(physical_devices[0], True)
+
 
 def main():
     LEARNING_RATE = 1e-4
