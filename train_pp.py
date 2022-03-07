@@ -20,7 +20,7 @@ tf.config.experimental.set_memory_growth(physical_devices[0], True)
 
 def main():
     LEARNING_RATE = 1e-4
-    unet_model = xnet.Xnet(backbone_name='efficientnetb1', classes=3)
+    unet_model = xnet.Xnet(backbone_name='efficientnetb0', classes=3)
 
     unet_model.compile(loss=losses.SparseCategoricalCrossentropy(),
                   optimizer=Adam(learning_rate=LEARNING_RATE),
