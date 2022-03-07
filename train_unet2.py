@@ -21,7 +21,7 @@ def main():
     keras.backend.set_image_data_format('channels_last')
 
     LEARNING_RATE = 1e-4
-    unet_model = sm.Unet(backbone_name='vgg16', classes=3, activation='sigmoid')
+    unet_model = sm.Unet(backbone_name='efficientnetb1', classes=3, activation='sigmoid')
 
     unet_model.compile(loss=losses.SparseCategoricalCrossentropy(),
                        optimizer=Adam(learning_rate=LEARNING_RATE),
@@ -31,7 +31,7 @@ def main():
     # unet_model = tf.keras.models.load_model('unet_model', custom_objects=custom_objects) # 160 + 80
     # unet_model = tf.keras.models.load_model('unet_pp_model') # 80
 
-    train_dataset, validation_dataset = floorplans.load_data()
+    train_dataset, validation_dataset = floorplans.load_data(normalize=False)
 
     trainer = unet.Trainer(checkpoint_callback=True)
     trainer.fit(unet_model,
