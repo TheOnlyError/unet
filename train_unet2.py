@@ -21,7 +21,7 @@ def main():
     keras.backend.set_image_data_format('channels_last')
 
     LEARNING_RATE = 1e-4
-    unet_model = sm.Unet(backbone_name='efficientnetb0', classes=3, activation='sigmoid')
+    unet_model = sm.Unet(backbone_name='efficientnetb1', classes=3, activation='sigmoid')
 
     unet_model.compile(loss=losses.SparseCategoricalCrossentropy(),
                        optimizer=Adam(learning_rate=LEARNING_RATE),
@@ -37,7 +37,7 @@ def main():
     trainer.fit(unet_model,
                 train_dataset,
                 validation_dataset,
-                epochs=60,
+                epochs=120,
                 batch_size=1,
                 verbose=2)
 
