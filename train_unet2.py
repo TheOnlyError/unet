@@ -12,7 +12,7 @@ import src.segmentation_models as sm
 from src.unet.datasets import floorplans
 
 os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+# os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 logging.disable(logging.WARNING)
 
 
@@ -21,7 +21,7 @@ def main():
     keras.backend.set_image_data_format('channels_last')
 
     LEARNING_RATE = 1e-4
-    unet_model = sm.Unet(backbone_name='efficientnetb1', classes=3, activation='sigmoid')
+    unet_model = sm.Unet(backbone_name='vgg16', classes=3, activation='sigmoid')
 
     unet_model.compile(loss=losses.SparseCategoricalCrossentropy(),
                        optimizer=Adam(learning_rate=LEARNING_RATE),
@@ -33,7 +33,7 @@ def main():
 
     train_dataset, validation_dataset = floorplans.load_data()
 
-    trainer = unet.Trainer(checkpoint_callback=False)
+    trainer = unet.Trainer(checkpoint_callback=True)
     trainer.fit(unet_model,
                 train_dataset,
                 validation_dataset,

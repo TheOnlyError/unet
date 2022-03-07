@@ -50,8 +50,8 @@ def unpad(x, pad):
 def main():
     plusplus = True
     if plusplus:
-        # unet_model = tf.keras.models.load_model('unet2_model', custom_objects=custom_objects)
-        unet_model = tf.keras.models.load_model('unet_pp_model', custom_objects=custom_objects)
+        unet_model = tf.keras.models.load_model('unet2_model', custom_objects=custom_objects)
+        # unet_model = tf.keras.models.load_model('unet_pp_model', custom_objects=custom_objects)
     else:
         unet_model = tf.keras.models.load_model('unet_model', custom_objects=custom_objects)
 
