@@ -61,3 +61,5 @@ MANIFEST
 .venv*/
 
 unet_pp_model/
+
+unet2_model/
