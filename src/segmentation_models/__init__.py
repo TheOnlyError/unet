@@ -113,11 +113,13 @@ from .models.unet import Unet as _Unet
 from .models.pspnet import PSPNet as _PSPNet
 from .models.linknet import Linknet as _Linknet
 from .models.fpn import FPN as _FPN
+from ..xnet.model import Xnet as _Xnet
 
 Unet = inject_global_submodules(_Unet)
 PSPNet = inject_global_submodules(_PSPNet)
 Linknet = inject_global_submodules(_Linknet)
 FPN = inject_global_submodules(_FPN)
+Xnet = inject_global_submodules(_Xnet)
 get_available_backbone_names = Backbones.models_names
 
 

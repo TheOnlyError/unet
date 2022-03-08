@@ -16,20 +16,17 @@ os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
 # os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 logging.disable(logging.WARNING)
 
-physical_devices = tf.config.experimental.list_physical_devices('GPU')
-tf.config.experimental.set_memory_growth(physical_devices[0], True)
-
 
 def main():
     sm.set_framework('tf.keras')
 
     LEARNING_RATE = 1e-4
-    unet_model = xnet.Xnet(backbone_name='vgg16', classes=3)
+    unet_model = sm.Xnet(backbone_name='vgg16', classes=3)
 
     unet_model.compile(loss=losses.SparseCategoricalCrossentropy(),
-                  optimizer=Adam(learning_rate=LEARNING_RATE),
-                  metrics=[metrics.SparseCategoricalAccuracy()],
-                  )
+                       optimizer=Adam(learning_rate=LEARNING_RATE),
+                       metrics=[metrics.SparseCategoricalAccuracy()],
+                       )
 
     # unet_model = tf.keras.models.load_model('unet_model', custom_objects=custom_objects) # 160 + 80
     # unet_model = tf.keras.models.load_model('unet_pp_model') # 80
@@ -45,6 +42,7 @@ def main():
                 verbose=2)
 
     unet_model.save("unet_pp_model")
+
 
 if __name__ == "__main__":
     tic = time.time()
