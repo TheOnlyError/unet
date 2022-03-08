@@ -9,6 +9,7 @@ layers = None
 models = None
 keras_utils = None
 
+
 def freeze_model(model):
     for layer in model.layers:
         layer.trainable = False
@@ -33,12 +34,12 @@ def Xnet(backbone_name='efficientnetb0',
     submodule_args = filter_keras_submodules(kwargs)
     backend, layers, models, keras_utils = get_submodules_from_kwargs(submodule_args)
 
-
     backbone = Backbones.get_backbone(
         backbone_name,
         input_shape=input_shape,
         weights=encoder_weights,
         include_top=False,
+        **kwargs,
     )
 
     if skip_connections == 'default':

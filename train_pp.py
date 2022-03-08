@@ -4,6 +4,8 @@ import time
 
 import tensorflow as tf
 
+from src import unet
+
 from tensorflow import losses, metrics
 
 import src.segmentation_models as sm
