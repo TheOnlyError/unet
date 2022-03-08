@@ -14,6 +14,7 @@ os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
 logging.disable(logging.WARNING)
 
 from PIL import Image
+
 Image.MAX_IMAGE_PIXELS = None
 
 
@@ -48,10 +49,10 @@ def unpad(x, pad):
 
 
 def main():
-    plusplus = True
+    plusplus = False
     if plusplus:
-        # unet_model = tf.keras.models.load_model('unet2_model', custom_objects=custom_objects)
-        unet_model = tf.keras.models.load_model('unet_pp_model', custom_objects=custom_objects)
+        unet_model = tf.keras.models.load_model('unet2_model', custom_objects=custom_objects)
+        # unet_model = tf.keras.models.load_model('unet_pp_model', custom_objects=custom_objects)
     else:
         unet_model = tf.keras.models.load_model('unet_model', custom_objects=custom_objects)
 
@@ -76,7 +77,7 @@ def main():
                 image, pads = pad_to(image, 32)
                 shp = image.shape
             image = tf.cast(image, dtype=tf.float32)
-            image = tf.reshape(image, [-1, shp[0], shp[1], 3]) / 255
+            image = tf.reshape(image, [-1, shp[0], shp[1], 3]) / 255  # Only divide if not effnet
             # image = tf.reshape(image, [-1, shp[0], shp[1], 3])
 
             prediction = unet_model.predict(image)
@@ -89,7 +90,7 @@ def main():
             timestr = time.strftime("%Y%m%d-%H%M%S")
             mpimg.imsave("result" + timestr + str(i) + ".jpg", result.astype(np.uint8))
     else:
-        train_dataset, validation_dataset = floorplans.load_data()
+        train_dataset, validation_dataset = floorplans.load_data(normalize=True)
         rows = 3
         for t in range(3):
             fig, axs = plt.subplots(rows, 3, figsize=(8, rows * 3))
