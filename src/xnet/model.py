@@ -11,6 +11,11 @@ def freeze_model(model):
     return
 
 
+backend = None
+layers = None
+models = None
+keras_utils = None
+
 def Xnet(backbone_name='efficientnetb0',
          input_shape=(None, None, 3),
          input_tensor=None,
