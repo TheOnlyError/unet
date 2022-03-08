@@ -1,7 +1,4 @@
-from classification_models import get_submodules_from_kwargs
-
 from src.segmentation_models import Backbones
-from src.segmentation_models.models._utils import filter_keras_submodules
 from src.xnet.builder import build_xnet
 
 
@@ -10,11 +7,6 @@ def freeze_model(model):
         layer.trainable = False
     return
 
-
-backend = None
-layers = None
-models = None
-keras_utils = None
 
 def Xnet(backbone_name='efficientnetb0',
          input_shape=(None, None, 3),
@@ -30,10 +22,6 @@ def Xnet(backbone_name='efficientnetb0',
          classes=1,
          activation='sigmoid',
          **kwargs):
-    global backend, layers, models, keras_utils
-    submodule_args = filter_keras_submodules(kwargs)
-    backend, layers, models, keras_utils = get_submodules_from_kwargs(submodule_args)
-
     backbone = Backbones.get_backbone(
         backbone_name,
         input_shape=input_shape,

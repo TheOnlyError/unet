@@ -6,6 +6,8 @@ import tensorflow as tf
 
 from tensorflow import losses, metrics
 
+import src.segmentation_models as sm
+
 from src import unet, xnet
 from src.unet.datasets import floorplans
 from tensorflow.keras.optimizers import Adam
@@ -19,6 +21,8 @@ tf.config.experimental.set_memory_growth(physical_devices[0], True)
 
 
 def main():
+    sm.set_framework('tf.keras')
+
     LEARNING_RATE = 1e-4
     unet_model = xnet.Xnet(backbone_name='vgg16', classes=3)
 
