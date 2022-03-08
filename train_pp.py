@@ -8,7 +8,6 @@ from tensorflow import losses, metrics
 
 import src.segmentation_models as sm
 
-from src import unet, xnet
 from src.unet.datasets import floorplans
 from tensorflow.keras.optimizers import Adam
 
