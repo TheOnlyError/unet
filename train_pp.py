@@ -30,13 +30,13 @@ def main():
     # unet_model = tf.keras.models.load_model('unet_model', custom_objects=custom_objects) # 160 + 80
     # unet_model = tf.keras.models.load_model('unet_pp_model') # 80
 
-    train_dataset, validation_dataset = floorplans.load_data(normalize=False)
+    train_dataset, validation_dataset = floorplans.load_data(normalize=True)
 
     trainer = unet.Trainer(checkpoint_callback=True)
     trainer.fit(unet_model,
                 train_dataset,
                 validation_dataset,
-                epochs=240,
+                epochs=80,
                 batch_size=1,
                 verbose=2)
 
