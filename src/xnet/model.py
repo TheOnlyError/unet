@@ -3,6 +3,7 @@ from tensorflow.keras.applications import (EfficientNetB0, EfficientNetB1,
                                            EfficientNetB4, EfficientNetB5,
                                            EfficientNetB6, EfficientNetB7)
 
+from src.segmentation_models import Backbones
 from src.xnet.builder import build_xnet
 
 backbones = {
@@ -60,14 +61,15 @@ def Xnet(backbone_name='efficientnetb0',
          upsample_rates=(2, 2, 2, 2, 2),
          classes=1,
          activation='sigmoid'):
-    backbone = get_backbone(backbone_name,
-                            input_shape=input_shape,
-                            input_tensor=input_tensor,
-                            weights=encoder_weights,
-                            include_top=False)
+    backbone = Backbones.get_backbone(
+        backbone_name,
+        input_shape=input_shape,
+        weights=encoder_weights,
+        include_top=False,
+    )
 
     if skip_connections == 'default':
-        skip_connections = DEFAULT_SKIP_CONNECTIONS[backbone_name]
+        skip_connections = Backbones.get_feature_layers(backbone_name, n=4)
 
     model = build_xnet(backbone,
                        classes,

@@ -20,7 +20,7 @@ tf.config.experimental.set_memory_growth(physical_devices[0], True)
 
 def main():
     LEARNING_RATE = 1e-4
-    unet_model = xnet.Xnet(backbone_name='efficientnetb0', classes=3)
+    unet_model = xnet.Xnet(backbone_name='vgg16', classes=3)
 
     unet_model.compile(loss=losses.SparseCategoricalCrossentropy(),
                   optimizer=Adam(learning_rate=LEARNING_RATE),
@@ -30,9 +30,9 @@ def main():
     # unet_model = tf.keras.models.load_model('unet_model', custom_objects=custom_objects) # 160 + 80
     # unet_model = tf.keras.models.load_model('unet_pp_model') # 80
 
-    train_dataset, validation_dataset = floorplans.load_data()
+    train_dataset, validation_dataset = floorplans.load_data(normalize=False)
 
-    trainer = unet.Trainer(checkpoint_callback=False)
+    trainer = unet.Trainer(checkpoint_callback=True)
     trainer.fit(unet_model,
                 train_dataset,
                 validation_dataset,
