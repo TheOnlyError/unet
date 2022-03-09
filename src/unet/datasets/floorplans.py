@@ -64,6 +64,7 @@ def preprocessNormalize(img, mask, size=512):  # 1024
 
 def preprocess(img, mask, size=512):  # 1024
     img = tf.cast(img, dtype=tf.float32)
+    img = tf.image.resize(img, [size, size])
     img = tf.reshape(img, [size, size, 3])
     mask = tf.reshape(mask, [size, size, 1])
     return img, mask
