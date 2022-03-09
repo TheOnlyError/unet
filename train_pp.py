@@ -15,20 +15,10 @@ from src.unet.datasets import floorplans
 os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
 # os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
-
-os.environ['TF_CUDNN_DETERMINISTIC']='1'
-
 logging.disable(logging.WARNING)
 
 
 def main():
-    # Initialize seeds
-    seed = int(random.random() * 1000)
-    tf.random.set_seed(seed)
-    np.random.seed(seed)
-    random.seed(seed)
-    print("Seed: {0}".format(seed))
-
     sm.set_framework('tf.keras')
 
     policy = tf.keras.mixed_precision.experimental.Policy('mixed_float16')
