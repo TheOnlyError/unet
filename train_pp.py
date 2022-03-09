@@ -2,16 +2,13 @@ import logging
 import os
 import time
 
-import tensorflow as tf
-
-from src import unet
-
 from tensorflow import losses, metrics
+from tensorflow.keras import mixed_precision
+from tensorflow.keras.optimizers import Adam
 
 import src.segmentation_models as sm
-
+from src import unet
 from src.unet.datasets import floorplans
-from tensorflow.keras.optimizers import Adam
 
 os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
 # os.environ["CUDA_VISIBLE_DEVICES"] = "0"
@@ -21,9 +18,11 @@ logging.disable(logging.WARNING)
 def main():
     sm.set_framework('tf.keras')
 
+    mixed_precision.set_global_policy('mixed_float16')
+
     LEARNING_RATE = 1e-4
     # unet_model = sm.Xnet(backbone_name='vgg16', classes=3)
-    unet_model = sm.Xnet(backbone_name='efficientnetb0', classes=3)
+    unet_model = sm.Xnet(backbone_name='efficientnetb5', classes=3)
 
     unet_model.compile(loss=losses.SparseCategoricalCrossentropy(),
                        optimizer=Adam(learning_rate=LEARNING_RATE),

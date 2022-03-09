@@ -1,10 +1,11 @@
-from tensorflow.keras.layers import Conv2D
 from tensorflow.keras.layers import Activation
+from tensorflow.keras.layers import Conv2D
 from tensorflow.keras.models import Model
 
 from .blocks import Transpose2D_block
 from .blocks import Upsample2D_block
 from .utils import get_layer_number, to_tuple
+
 
 def build_xnet(backbone, classes, skip_connection_layers,
                decoder_filters=(256, 128, 64, 32, 16),
@@ -62,12 +63,12 @@ def build_xnet(backbone, classes, skip_connection_layers,
                 interm[(n_upsample_blocks + 1) * i + j + 1] = up_block(decoder_filters[n_upsample_blocks - i - 2],
                                                                        i + 1, j + 1, upsample_rate=upsample_rate,
                                                                        skip=interm[(n_upsample_blocks + 1) * i: (
-                                                                                                                            n_upsample_blocks + 1) * i + j + 1],
+                                                                                                                        n_upsample_blocks + 1) * i + j + 1],
                                                                        use_batchnorm=use_batchnorm)(
                     interm[(n_upsample_blocks + 1) * (i + 1) + j])
 
     x = Conv2D(classes, (3, 3), padding='same', name='final_conv')(interm[n_upsample_blocks])
-    x = Activation(activation, name=activation)(x)
+    x = Activation(activation, name=activation, dtype='float32')(x)  # added dtype='float32', due to mixed policy
 
     model = Model(input, x)
     return model
