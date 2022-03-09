@@ -2,8 +2,8 @@ import logging
 import os
 import time
 
+import tensorflow as tf
 from tensorflow import losses, metrics
-from tensorflow.keras import mixed_precision
 from tensorflow.keras.optimizers import Adam
 
 import src.segmentation_models as sm
@@ -18,7 +18,8 @@ logging.disable(logging.WARNING)
 def main():
     sm.set_framework('tf.keras')
 
-    mixed_precision.set_global_policy('mixed_float16')
+    policy = tf.keras.mixed_precision.experimental.Policy('mixed_float16')
+    tf.keras.mixed_precision.experimental.set_policy(policy)
 
     LEARNING_RATE = 1e-4
     # unet_model = sm.Xnet(backbone_name='vgg16', classes=3)
