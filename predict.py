@@ -49,7 +49,7 @@ def unpad(x, pad):
 
 
 def main():
-    plusplus = False
+    plusplus = True
     if plusplus:
         unet_model = tf.keras.models.load_model('unet2_model', custom_objects=custom_objects)
         # unet_model = tf.keras.models.load_model('unet_pp_model', custom_objects=custom_objects)
@@ -77,8 +77,8 @@ def main():
                 image, pads = pad_to(image, 32)
                 shp = image.shape
             image = tf.cast(image, dtype=tf.float32)
-            image = tf.reshape(image, [-1, shp[0], shp[1], 3]) / 255  # Only divide if not effnet
-            # image = tf.reshape(image, [-1, shp[0], shp[1], 3])
+            # image = tf.reshape(image, [-1, shp[0], shp[1], 3]) / 255  # Only divide if not effnet
+            image = tf.reshape(image, [-1, shp[0], shp[1], 3])
 
             prediction = unet_model.predict(image)
             result = prediction[0].argmax(axis=-1)
